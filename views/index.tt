@@ -1,0 +1,14 @@
+<div>
+    <h1>Search Pod</h1>
+</div>
+<form action="[% add_module_url %]" method=post class=add-entry>
+    <label>Generate Pod for module:</label>
+    <input type="text" size=30 name="title">
+    <input type="submit" value="Generate">
+</form>
+<form action="[% search_pod_url %]" method=post class=add-entry>
+    <label>Search Stored Pod:</label>
+    <input type="text" size=30 name="search">
+    <input type="submit" value="Search">
+</form>
+
