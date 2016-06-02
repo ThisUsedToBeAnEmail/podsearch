@@ -1,5 +1,4 @@
 # podsearch
-my first dance
 
 Install postgres...
 
@@ -11,4 +10,4 @@ createdb -O dancer podsearch
 
 psql -U dancer -W podsearch -f podsearch.sql
 
-................... tomos
+................... tbc
