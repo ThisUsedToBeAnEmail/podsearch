@@ -4,7 +4,8 @@ my first dance
 Install postgres...
 
 createuser -P dancer
-Enter password for new role: <dance>
+
+Enter password for new role: dance
 
 createdb -O dancer podsearch
 
