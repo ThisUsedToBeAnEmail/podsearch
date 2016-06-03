@@ -1,114 +1,135 @@
 package Pod::Hashed;
-use base qw(Pod::Simple::PullParser);
+use Pod::Simple;
+@ISA     = qw(Pod::Simple);
+$VERSION = '1.01';
 
 use 5.006;
-use Moose;
-use Data::Dumper;
-use Carp;
+use Moo;
 
 has 'pod' => (
-    traits => ['Array'],
-    is => 'rw',
-    isa => 'ArrayRef',
-    lazy => 1,
-    default => sub { [ ] },
-    handles => {
-        add_section => 'push',    
-        pod_aoh => 'elements',
-        get => 'get'
-    }
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { [] },
 );
 
 has 'section' => (
-    traits => ['Hash'],
-    is => 'rw',
-    isa => 'HashRef',
-    lazy => 1,
-    default => sub { { } },    
-    handles => {
-        section_clear => 'clear',
-        set_section => 'set',
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { {} },
+);
+
+has 'title_elements' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        return {
+            'head1' => 1,
+            'head2' => 1,
+            'head3' => 1,
+            'head4' => 1
+        };
+    },
+);
+
+has 'content_elements' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        return {
+            'Para'      => 1,
+            'item-text' => 1,
+            'over-text' => 1,
+            'Verbatim'  => 1,
+            'C'         => 1,
+            'L'         => 1,
+            'B'         => 1,
+            'I'         => 1
+        };
     }
 );
 
-sub run  {
+has 'element_name' => (
+    is      => 'rw',
+    default => q{},
+);
+
+sub get {
+    my ( $self, $index ) = @_;
+    my @pod = $self->pod;
+    return $pod[0][$index];
+}
+
+sub pod_aoh {
+    my $self = shift;
+    my @pod  = $self->pod;
+    return @{ $pod[0] };
+}
+
+sub _handle_element_start {
+    my ( $parser, $element_name, $atrr_hash_r ) = @_;
+
+    $parser->element_name($element_name);
+    if ( $parser->title_elements->{$element_name} ) {
+
+        if ( $parser->section->{title} && $parser->section->{identifier} ) {
+            $parser->_insert_pod;
+        }
+
+        if ( !$parser->section->{identifier} ) {
+            $parser->section->{identifier} = $element_name;
+        }
+    }
+}
+
+sub _handle_text {
+    my ( $parser, $text ) = @_;
+
+    my $element_name = $parser->element_name;
+    if ( $parser->content_elements->{$element_name} ) {
+
+        if ( my $para = $parser->section->{content} ) {
+
+            if ( $element_name =~ m{item-text|over-text} ) {
+                $parser->section->{content} = $para . "\n\n" . $text . "\n\n";
+            }
+            # expecting either a new paragragh or code example
+            elsif ( $para =~ /[\.\;\:\*]$/ ) {
+                $parser->section->{content} = $para . "\n\n" . $text;
+            }
+            
+            else {
+                $parser->section->{content} = $para . $text;
+            }
+        }
+
+        # else set content
+        else {
+            $parser->section->{content} = $text;
+        }
+    }
+    elsif ( $parser->title_elements->{$element_name} ) {
+        $parser->section->{title} = $text;
+    }
+}
+
+sub _handle_element_end {
+    my ( $parser, $element_name, $attr_hash_r ) = @_;
+
+    if ( $parser->source_dead ) {
+        $parser->_insert_pod
+          if $parser->section->{title}
+          && $parser->section->{identifier};
+    }
+}
+
+sub _insert_pod {
     my $self = shift;
 
-    my ($tag, $text, $identifier, $title, $para);
-    my %valid_tags = ( 'head1' => 1, 'head2' => 1,  'Para' => 1, 'over-text' => 1, 'item-text' => 1, 'Verbatim' => 1);
-    my %text_tags = (  'Para' => 1,  'item-text' => 1, 'over-text' => 1, 'Verbatim' => 1, 'C' => 1, 'L' => 1, 'B' => 1, 'I' => 1 );
-    while ( my $token = $self->get_token ) {
-        if ( $token->isa('Pod::Simple::PullParserStartToken') ) {    
-            $tag = $token->tagname;
-            if (exists $valid_tags{$tag}) {
-                next if exists $text_tags{$tag};
-
-                if ($title && $identifier){
-                    $self->set_section(
-                        identifier => $identifier,
-                        title => $title, 
-                        content => $para
-                    );
-
-                    $self->insert_pod;
-                    ($title, $para, $identifier) = undef;
-                }
-
-                if (!$identifier) { 
-                    # set the identifier on the first tag
-                    $identifier = $tag;
-                }
-            }
-        } 
-        elsif ( $token->isa('Pod::Simple::PullParserTextToken') ) {
-            $text = $token->text;
-            if (exists $text_tags{$tag}) {        
-                if ($para) {
-                    if ($tag =~ m{item-text|over-text}){
-                        $para = $para . "\n\n" . $text . "\n\n";
-                    }
-                    elsif ($para =~ /[\.\;\:]$/) {
-                        $para = $para . "\n\n" . $text;
-                    } 
-                    else {
-                        $para = $para . $text;
-                    }
-                } 
-                else {
-                    $para = $text;
-                }
-            } 
-            else {
-                $title = $text;
-            }
-        } 
-        elsif ( $token->isa('Pod::Simple::PullParserEndToken') ) {
-        
-        } 
-    }
-
-    if ($title && $identifier){
-        $self->set_section(
-            identifier => $identifier,
-            title => $title, 
-            content => $para
-        );
-
-        $self->insert_pod;
-    }
+    push $self->pod, $self->section;
+    return $self->section( {} );
 }
 
-sub insert_pod {
-    my ( $self ) = @_;
-
-    my $section = $self->section;
-
-    $self->add_section($section);
-
-    return $self->section_clear;
-}
-
-1; 
+1;
 
 __END__
 
@@ -127,14 +148,14 @@ Version 0.1
 
     $parser->parse_from_file( 'perl.pod' );
 
-    $pod_aoh = $parser->pod_aoh;
+    @pod_aoh = $parser->pod_aoh;
     $pod_name = $parser->get(0);
 
     $pod_name->{title};
 
 =head1 DESCRIPTION
 
-Kinda Parse POD into an array of hashes?
+Parse POD into an array of hashes
 
     {
         identifier => 'head1',
@@ -147,5 +168,3 @@ Kinda Parse POD into an array of hashes?
 
 =back
 
-
-# End of Pod::ToHash
