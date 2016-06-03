@@ -11,15 +11,14 @@ use parent 'DBIx::Class::ResultSet';
 sub generate_pod {
     my ($self, $name) = @_;
 
-    use Data::Dumper;
     my $mcpan = MetaCPAN::Client->new;
     my $module = $mcpan->module($name);
     my $version = $module->version_numified;
     my @pod = _parse_module($module->pod('x-pod'));
 
-    my $result = $self->search_rs({
-        name => $module->name,
-    })->first;
+    my $result = $self->single({
+        name => $name
+    });
 
     if ($result) {
         return "$name Pod already up to date" if $result->version eq $version; 
@@ -43,8 +42,6 @@ sub update_pod {
     }
 }
 
-
-# shouldn't be here
 sub _parse_module {
     my ( $module ) = @_;
 
