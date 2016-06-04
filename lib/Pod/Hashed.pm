@@ -93,10 +93,9 @@ sub _handle_text {
                 $parser->section->{content} = $para . "\n\n" . $text . "\n\n";
             }
             # expecting either a new paragragh or code example
-            elsif ( $para =~ /[\.\;\:\*]$/ ) {
+            elsif ( $para =~ /[\.\;\:\*\']$/ ) {
                 $parser->section->{content} = $para . "\n\n" . $text;
             }
-            
             else {
                 $parser->section->{content} = $para . $text;
             }

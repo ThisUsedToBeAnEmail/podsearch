@@ -6,9 +6,16 @@
     <input type="text" size=30 name="title">
     <input type="submit" value="Generate">
 </form>
-<form action="[% search_pod_url %]" method=post class=add-entry>
+<form action="[% search_pod_url %]" class=add-entry>
     <label>Search Stored Pod:</label>
-    <input type="text" size=30 name="search">
+    <input type="text" size=30 name="query">
     <input type="submit" value="Search">
 </form>
+
+[% IF search_results %]
+    [% FOREACH result IN search_results %]
+        <h1><pre><code>[% result.title | html %]</code></pre></h1>
+        <p><pre><code>[% result.escaped_content %]</code></pre></p>
+    [% END %]
+[% END %]
 

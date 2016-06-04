@@ -1,10 +1,10 @@
 use utf8;
 package Podsearch::Schema::Result::Pod;
 
-use strict;
-use warnings;
+use Moo;
+use HTML::Escape qw/escape_html/;
 
-use base 'DBIx::Class::Core';
+extends 'DBIx::Class::Core';
 
 __PACKAGE__->table("pod");
 
@@ -27,6 +27,28 @@ __PACKAGE__->belongs_to(
     "module",
     "Podsearch::Schema::Result::Pod",
     { id => "module_id" },
+);
+
+has 'escaped_title' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+
+        my $title = $self->title;
+        return escape_html($title);
+    }
+);
+
+has 'escaped_content' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+
+        my $content = $self->content;
+        return escape_html($content);
+    }
 );
 
 1;
