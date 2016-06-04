@@ -44,19 +44,20 @@ get '/search' => sub {
     template 'index', {
         query => $query,
         search_results => \@results,
+        add_module_url => uri_for('/module'),
+        search_pod_url => uri_for('/search'),
     };
 };
 
 sub _perform_search {
     my $query = shift;
 
-    my @search_rs = schema->resultset('Pod')->search({
-        -or => [
-            title => { like => "%$query%" },
-            content => { like => "%$query%" },
-        ]
-    });
-    
+    my @search_rs = schema->resultset('Pod')->pgfulltext_search($query, 
+        { 
+            normalisation => { length => 1 },
+        },   
+    );
+
     return @search_rs;
 }
 

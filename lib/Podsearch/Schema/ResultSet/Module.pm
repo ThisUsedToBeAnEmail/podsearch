@@ -1,12 +1,12 @@
 use utf8;
 package Podsearch::Schema::ResultSet::Module;
+use Moo;
 
-use strict;
-use warnings;
+extends 'DBIx::Class::ResultSet';
+with 'Podsearch::Schema::Role::ResultSet::PgFulltext';
+
 use MetaCPAN::Client;
 use Pod::Hashed;
-
-use parent 'DBIx::Class::ResultSet';
 
 sub generate_pod {
     my ($self, $name) = @_;

@@ -14,11 +14,11 @@ __PACKAGE__->add_columns(
     "module_id",
     { data_type => "integer" },
     "identifier",
-    { data_type => "text", is_nullable => 0 },
+    { data_type => "text", is_nullable => 0,},
     "title",
-    { data_type => "text", is_nullable => 0 },
+    { data_type => "text", is_nullable => 0, pgfulltext => 'A' },
     "content",
-    { data_type => "text", is_nullable => 1 },
+    { data_type => "text", is_nullable => 1, pgfulltext => 'B' },
 );
 
 __PACKAGE__->set_primary_key("id");
