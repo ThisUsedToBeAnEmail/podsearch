@@ -1,0 +1,7 @@
+    <div id="search-box">
+        <h4>Generate Pod for module:</h4>
+        <form action="[% add_module_url %]" method=post class=add-entry>
+            <input type="text" size=30 name="title">
+            <input type="submit" class="button" value="Generate">
+        </form>
+    </div>

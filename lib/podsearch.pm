@@ -19,18 +19,14 @@ sub get_flash {
 }
 
 get '/' => sub {
-    my $module = schema->resultset('Module')->first;
-    template 'index', {
-        'msg' => get_flash(),
-        add_module_url => uri_for('/module'),   
-        search_pod_url => uri_for('/search'),
-    };
+   redirect '/search';
 };
 
-post '/module' => sub {
-    my $message = schema->resultset('Module')->generate_pod(params->{'title'});
-    set_flash($message);
-    redirect '/'; 
+get '/generate' => sub {
+    template 'generate', {
+        'msg' => get_flash(),
+        add_module_url => uri_for('/add_module'),   
+    };
 };
 
 get '/search' => sub {
@@ -38,21 +34,44 @@ get '/search' => sub {
     my @results; 
 
     if ( length $query ) {
-        @results = _perform_search($query);
+        @results = _perform_search('Pod', $query);
     }
     
-    template 'index', {
+    template 'search', {
         query => $query,
         search_results => \@results,
-        add_module_url => uri_for('/module'),
         search_pod_url => uri_for('/search'),
     };
 };
 
-sub _perform_search {
-    my $query = shift;
+get '/module_list' => sub {
+    my $query = params->{'query'};
+    
+    my @modules;
+    if ($query) {
+        @modules = _perform_search('Module', $query);
+    } else {
+        @modules = schema->resultset('Module')->all;
+    }
 
-    my @search_rs = schema->resultset('Pod')->pgfulltext_search($query, 
+    template 'module_list', {
+        'msg' => get_flash(),
+        module_list => \@modules,
+        search_module_url => uri_for('/module_list'),
+    };  
+};
+
+
+post '/add_module' => sub {
+    my $message = schema->resultset('Module')->generate_pod(params->{'title'});
+    set_flash($message);
+    redirect '/module_list'; 
+};
+
+sub _perform_search {
+    my ($class, $query) = @_;
+
+    my @search_rs = schema->resultset($class)->pgfulltext_search($query, 
         { 
             normalisation => { length => 1 },
         },   

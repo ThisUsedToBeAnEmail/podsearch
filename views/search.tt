@@ -1,0 +1,17 @@
+<div class="main-content">
+    <div id="search-box">
+        <h4>Search Stored Pod:</h4>
+        <form action="[% search_pod_url %]" class=add-entry>
+            <input type="text" class="search" size=30 name="query">
+            <input type="submit" class="button" value="Search">
+        </form>
+    </div>
+    <div class="search-results">
+        [% IF search_results %]
+            [% FOREACH result IN search_results %]
+                <h1><pre><code>[% result.title | html %]</code></pre></h1>
+                <div><pre><code>[% result.content | html %]</code></pre></div>
+            [% END %]
+        [% END %]
+    </div>
+</div>

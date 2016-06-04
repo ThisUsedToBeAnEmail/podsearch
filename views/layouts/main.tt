@@ -4,7 +4,7 @@
   <meta charset="<% settings.charset %>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>podsearch</title>
-  <link rel="stylesheet" href="[% request.uri_base %]/css/style.css">
+  <link rel="stylesheet" href="[% request.uri_base %]/css/default.css">
 
 <!-- Grab jQuery from a CDN, fall back to local if necessary -->
 <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -14,10 +14,29 @@
 
 </head>
 <body>
-<div>[% msg %]</div>
-[% content %]
-<div id="footer">
-Powered by <a href="http://perldancer.org/">Dancer2</a> [% dancer_version %]
+    
+<div id="logo" class="container">
+    <h1><a href="#">PodSearch</a></h1>
 </div>
+
+<div class="menu-wrapper">
+    <div id="menu" class="container">
+        <ul>
+            <li><a href="/generate">Generate</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/module_list">Modules</a><li>
+        </ul>
+    </div>
+</div>
+
+<div id="page" class="container">
+    <div>[% msg %]</div>
+    [% content %]
+</div>
+
+<div id="footer" class="container">
+    Powered by <a href="http://perldancer.org/">Dancer2</a> [% dancer_version %]
+</div>
+
 </body>
 </html>
