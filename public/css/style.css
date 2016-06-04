@@ -172,7 +172,6 @@ margin: 1.2em 0 0.6em 0;
 p {
 line-height: 1.5em;
 margin: 1.6em 0;
-white-space: pre-line;
 }
 
 code, .filepath, .app-info {
@@ -186,4 +185,7 @@ text-align: center;
 padding-right: 160px;
 font-family: sans-serif;
 font-size: 10px;
+}
+pre {
+    white-space: pre-wrap;
 }

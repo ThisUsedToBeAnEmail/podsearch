@@ -15,7 +15,7 @@
 [% IF search_results %]
     [% FOREACH result IN search_results %]
         <h1><pre><code>[% result.title | html %]</code></pre></h1>
-        <p><pre><code>[% result.escaped_content %]</code></pre></p>
+        <div><pre><code>[% result.escaped_content %]</code></pre></div>
     [% END %]
 [% END %]
 
