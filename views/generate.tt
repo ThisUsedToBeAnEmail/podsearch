@@ -1,7 +1,9 @@
-    <div id="search-box">
-        <h4>Generate Pod for module:</h4>
-        <form action="[% add_module_url %]" method=post class=add-entry>
-            <input type="text" size=30 name="title">
-            <input type="submit" class="button" value="Generate">
-        </form>
-    </div>
+<div class="main-content">
+    [% INCLUDE 'widgets/search-box.tt'
+        search_box_heading = 'Generate Pod for module:'
+        search_box_input = 'title'
+        search_box_button = 'Generate'
+        action = add_module_url
+        method = 'post' 
+    %]
+</div>

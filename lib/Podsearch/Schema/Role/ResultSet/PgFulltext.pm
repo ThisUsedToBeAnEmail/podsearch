@@ -12,7 +12,7 @@ has normalisation_ops => (
             length  => 2,
             harmonic_distance => 4,
             unique_words => 8,
-            log_uniquer_words => 16,
+            log_unique_words => 16,
             rank => 32,
         };
     }

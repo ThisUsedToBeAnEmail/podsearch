@@ -49,6 +49,7 @@ get '/search' => sub {
     }
     
     template 'search', {
+        'msg' => get_flash(),
         search_text => $search_text,
         search_results => \@results,
         search_pod_url => uri_for('/search'),
@@ -70,7 +71,6 @@ get '/module_list' => sub {
     }
 
     template 'module_list', {
-        'msg' => get_flash(),
         module_list => \@modules,
         search_module_url => uri_for('/module_list'),
     };  
@@ -79,7 +79,7 @@ get '/module_list' => sub {
 post '/add_module' => sub {
     my $message = schema->resultset('Module')->generate_pod(params->{'title'});
     set_flash($message);
-    redirect '/module_list'; 
+    redirect '/search?query=m:' . params->{'title'}; 
 };
 
 sub _perform_search {
@@ -98,7 +98,7 @@ sub _perform_search {
     if (my $query = $args->{query}) {
         $rs = $rs->pgfulltext_search($query, 
             { 
-                normalisation => { length => 1 },
+                normalisation => { rank => 1, log_unique_words => 1 },
             },   
         );
     }

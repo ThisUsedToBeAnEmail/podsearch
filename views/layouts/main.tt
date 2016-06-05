@@ -30,7 +30,7 @@
 </div>
 
 <div id="page" class="container">
-    <div>[% msg %]</div>
+    <div class="center" >[% msg %]</div>
     [% content %]
 </div>
 

@@ -289,29 +289,45 @@ pre {
     white-space: pre-wrap;
     margin: 20px 0 5px 0;
 }
-input[type="text"]{
-    height:25px;
-    width: 330px;
+
+
+form {
+    width: 351px;
+    margin: 0 auto;
+}
+
+.search {
+    padding: 6px 15px 6px 5px;
+    width: 255px;
 }
 
 input[type="text"]:focus{
     outline: none;
 }
 
-.button {
-    position: relative;
-    padding: 7px 15px;
-    left: -11px;
-    border: 2px solid #8e8e8e;
-    background-color: #747474;
-    color: white;
-    top: -1px;
-    font-family: monospace;
-    outline: none;
+input[type="submit"], input[type="submit"]:hover {
+    position:relative; 
+    left:-12px;
+    padding: 7px;
+    border:1px solid #CCC;
+    background: #f7f7f7; /* Old browsers */
+    background: -moz-linear-gradient(top, #f7f7f7 0%, #E0E0E0 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(100%,#E0E0E0)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #f7f7f7 0%,#E0E0E0 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #f7f7f7 0%,#E0E0E0 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #f7f7f7 0%,#E0E0E0 100%); /* IE10+ */
+    background: linear-gradient(top, #f7f7f7 0%,#E0E0E0 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#E0E0E0',GradientType=0 ); /* IE6-9 */
+    color:#5a5a5a;
+    cursor: pointer;
 }
 
-.button:hover {
-    background: #9B9B9B;
+input[type="submit"]:focus {
+    outline-color: grey;
+}
+
+input[type="submit"]:hover {
+    background: #f9f9f9;
 }
 
 .result {
@@ -323,3 +339,6 @@ input[type="text"]:focus{
     float: right;
 }
 
+.center {
+    text-align: center;
+}
