@@ -1,7 +1,7 @@
 <div class="main-content">
     <div id="search-box">
         [% INCLUDE 'widgets/search-box.tt'
-            search_box_heading = 'Search Stored Pod'
+            search_box_heading = 'Search Pod'
             search_box_input = 'query'
             search_text = search_text
             search_box_button = 'Search'
