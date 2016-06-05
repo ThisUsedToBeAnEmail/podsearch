@@ -25,8 +25,18 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->belongs_to(
     "module",
-    "Podsearch::Schema::Result::Pod",
-    { id => "module_id" },
+    "Podsearch::Schema::Result::Module",
+    { 'foreign.id' => 'self.module_id' },
+);
+
+has 'module_name' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        my $module = $self->module;
+        return $module->name;
+    }
 );
 
 has 'escaped_title' => (

@@ -22,7 +22,7 @@ __PACKAGE__->set_primary_key("id");
 __PACKAGE__->has_many(
     pod_sections =>
     'Podsearch::Schema::Result::Pod',
-    'module_id',
+    { 'foreign.module_id' => 'self.id' },
 );
 
 1;

@@ -19,7 +19,7 @@ has normalisation_ops => (
 );
 
 has column_spec => (
-    is => 'ro',
+    is => 'rw',
     lazy => 1,
     builder => '_build_column_spec',
 );
@@ -33,6 +33,7 @@ sub _build_column_spec {
         if (my $weight = $columns->{$name}->{pgfulltext}) {
             push @column_spec, { name => $name, weight => $weight };
         }
+    
     }
 
     croak "No pgfulltext column spec found in result class"
@@ -72,7 +73,7 @@ sub pgfulltext_search {
     
     $args ||= {};
     
-    my $column_spec = $args->{column_spec} || $self->column_spec;
+    my $column_spec = $self->column_spec;
     my $ts_query = $self->ts_query;
     my $ts_vector = $self->ts_vector;
     

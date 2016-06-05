@@ -9,8 +9,10 @@
     <div class="search-results">
         [% IF module_list %]
             [% FOREACH result IN module_list %]
-                <h1><pre><code>[% result.name | html %]</code></pre></h1>
-                <div><pre><code>[% result.version | html %]</code></pre></div>
+                <div class="result"> 
+                    <h1><pre><code>[% result.name | html %]</code></pre></h1>
+                    <div><pre><code>[% result.version | html %]</code></pre></div>
+                </div>
             [% END %]
         [% END %]
     </div>
