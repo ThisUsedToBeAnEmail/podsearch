@@ -98,8 +98,18 @@ sub _perform_search {
     }
 
     if ($args->{class} eq q{Pod}){
+
+        my @ignore = ( 
+            'NAME', 
+            'VERSION', 
+            'AUTHOR', 
+            'DIAGNOSTICS', 
+            'INCOMPATIBILITIES', 
+            'LICENSE AND COPYRIGHT' 
+        );
+
         # remove NAME attributes from rs as they're useless in search
-        $where{title} = { '!=' => 'NAME' };
+        $where{title} = { '-not in' => \@ignore };
     }
 
     $rs = $rs->search(\%where, \%attributes);
