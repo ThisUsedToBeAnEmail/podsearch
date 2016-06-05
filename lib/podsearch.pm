@@ -35,16 +35,20 @@ get '/search' => sub {
     my $search_text = $query; 
     my @results; 
     if ( length $query ) {
-        my $module;
-        
-        if ($query =~ s{m:}{}){
+        my ($action, $module);
+       
+        # should be able to do this in one line 
+        if ($query =~ m{r:|m:}){
+            ($action, $query) = split(/\:/, $query, 2);
+            # TODO error here if $action != m{m|r};
             ($module, $query) = split(/\s/, $query, 2);         
         }
 
         @results = _perform_search({
             class => 'Pod', 
             query => $query, 
-            module => $module
+            module => $module,
+            action => $action,
         });
     }
     
@@ -77,7 +81,10 @@ get '/module_list' => sub {
 };
 
 post '/add_module' => sub {
-    my $message = schema->resultset('Module')->generate_pod(params->{'title'});
+    my $resource = params->{'title'};
+
+    $resource =~ s{\:\:}{\-}; 
+    my $message = schema->resultset('Module')->generate_pod($resource);
     set_flash($message);
     redirect '/search?query=m:' . params->{'title'}; 
 };
@@ -90,15 +97,16 @@ sub _perform_search {
     my (%where, %attributes) = ();
 
     if (my $module = $args->{module}) {
-        my @pod = schema->resultset('Module')->pgfulltext_search($module)->all;
+        my $module_query = schema->resultset('Module')->pgfulltext_search($module);
+        
+        my @pod = $args->{action} eq q{m} ? $module_query->first : $module_query->all;
         my @pod_ids = map { $_->id } @pod;
         
         $where{module_id} = { -in => \@pod_ids };
         $attributes{order_by} = 'default_order';
     }
 
-    if ($args->{class} eq q{Pod}){
-
+    if ($args->{class} eq q{Pod} && length $query){
         my @ignore = ( 
             'NAME', 
             'VERSION', 
@@ -108,7 +116,6 @@ sub _perform_search {
             'LICENSE AND COPYRIGHT' 
         );
 
-        # remove NAME attributes from rs as they're useless in search
         $where{title} = { '-not in' => \@ignore };
     }
 
@@ -119,6 +126,7 @@ sub _perform_search {
     $rs = $rs->pgfulltext_search( $query, 
         { 
             normalisation => { rank => 1, log_unique_words => 1 },
+            rows => 10,
         },   
     );
 

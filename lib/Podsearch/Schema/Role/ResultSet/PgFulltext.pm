@@ -105,6 +105,10 @@ sub pgfulltext_search {
     my %attributes = (
         order_by => { -desc => \$rank },
     );
+    
+    if (my $rows = $args->{rows}) {
+        $attributes{rows} = $rows;
+    }
 
     return $self->search_rs(\%where, \%attributes);
 }
