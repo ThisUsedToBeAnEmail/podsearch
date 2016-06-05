@@ -2,7 +2,7 @@
     <div id="search-box">
         <h4>Search Stored Pod:</h4>
         <form action="[% search_pod_url %]" class=add-entry>
-            <input type="text" class="search" size=30 name="query">
+            <input type="text" class="search" size=30 name="query" value="[% search_text %]">
             <input type="submit" class="button" value="Search">
         </form>
     </div>

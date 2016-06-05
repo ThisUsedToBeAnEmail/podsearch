@@ -31,12 +31,13 @@ get '/generate' => sub {
 
 get '/search' => sub {
     my $query = params->{'query'};
-    
+   
+    my $search_text = $query; 
     my @results; 
     if ( length $query ) {
         my $module;
         
-        if ($query =~ s{r:}{}){
+        if ($query =~ s{m:}{}){
             ($module, $query) = split(/\s/, $query, 2);         
         }
 
@@ -48,7 +49,7 @@ get '/search' => sub {
     }
     
     template 'search', {
-        query => $query,
+        search_text => $search_text,
         search_results => \@results,
         search_pod_url => uri_for('/search'),
     };
