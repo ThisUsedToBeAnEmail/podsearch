@@ -27,7 +27,7 @@ sub generate_pod {
 
             if ($result) {
                 return "$name Pod already up to date" 
-                    if $result->version =< $version; 
+                    if $result->version <= $version; 
         
                 $self->update_pod($result, @pod);
                 $result->update({ version => $version });
