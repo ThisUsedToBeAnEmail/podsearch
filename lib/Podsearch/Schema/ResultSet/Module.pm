@@ -2,7 +2,7 @@ use utf8;
 package Podsearch::Schema::ResultSet::Module;
 use Moo;
 use Try::Tiny;
-use feature qw(say);
+use Carp qw(croak);
 extends 'DBIx::Class::ResultSet';
 with 'Podsearch::Schema::Role::ResultSet::PgFulltext';
 
@@ -27,7 +27,7 @@ sub generate_pod {
 
             if ($result) {
                 return "$name Pod already up to date" 
-                    if $result->version eq $version; 
+                    if $result->version =< $version; 
         
                 $self->update_pod($result, @pod);
                 $result->update({ version => $version });
@@ -42,7 +42,7 @@ sub generate_pod {
                 return "$name Pod has been generated";
             }
         } catch {
-            say "Could not generate Pod for $name";
+            croak "Could not generate Pod for $name";
         }
     }
 }
