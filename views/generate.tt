@@ -1,6 +1,6 @@
 <div class="main-content">
     [% INCLUDE 'widgets/search-box.tt'
-        search_box_heading = 'Generate Pod for module:'
+        search_box_heading = 'Generate Pod From Repository:'
         search_box_input = 'title'
         search_box_button = 'Generate'
         action = add_module_url
