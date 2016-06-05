@@ -18,6 +18,12 @@ has normalisation_ops => (
     }
 );
 
+has dictionary => (
+    is => 'ro',
+    lazy => 1,
+    default => q{english_nostop},
+);
+
 has column_spec => (
     is => 'rw',
     lazy => 1,
@@ -44,7 +50,10 @@ sub _build_column_spec {
 
 has ts_query => (
     is => 'rw',
-    default => q{plainto_tsquery(?)},
+    default => sub {
+        my $self = shift;
+        return sprintf("plainto_tsquery('%s', ?)", $self->dictionary),
+    }
 );
 
 has ts_vector => (
@@ -59,13 +68,14 @@ sub _build_ts_vector {
     my @vectors;
     foreach my $field (@{$self->column_spec}){
         push @vectors, sprintf(
-            q{setweight(to_tsvector('english', coalesce("me"."%s", '')), '%s')},
+            q{setweight(to_tsvector('%s', COALESCE(%s, '')), '%s')},
+            $self->dictionary,
             $field->{name},
             $field->{weight} || 'A',
         );
     }
 
-    return sprintf('( %s )', join(' || ', @vectors));
+    return sprintf('( %s )', join(" || ' ' || ", @vectors));
 }
 
 sub pgfulltext_search {

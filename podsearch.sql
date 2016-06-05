@@ -14,3 +14,4 @@ CREATE TABLE pod (
 );
 
 INSERT INTO modules (name, version) VALUES ('Testing', '1.0');
+

@@ -10,9 +10,22 @@ createdb -O dancer podsearch
 
 psql -U dancer -W podsearch -f podsearch.sql
 
-...................
+we have issues with stop words functions/methods are often short words, and by default tsquery uses a built in stop word dictionary.
 
-still can't search but you can generate a db of pod.
+errorr -- text-search query contains only stop words or doesn't contain lexemes, ignored
+
+for now lets override it with an empty dictionary  - no_stop_words.sql
+
+CREATE TEXT SEARCH DICTIONARY english_stem_nostop (
+    Template = snowball,
+    Language = english
+);
+
+"CREATE TEXT SEARCH CONFIGURATION public.english_nostop ( COPY = pg_catalog.english );
+ALTER TEXT SEARCH CONFIGURATION public.english_nostop
+   ALTER MAPPING FOR asciiword, asciihword, hword_asciipart, hword, hword_part, word WITH english_stem_nostop;"
+
+...................
 
 plackup bin/app.psgi
 

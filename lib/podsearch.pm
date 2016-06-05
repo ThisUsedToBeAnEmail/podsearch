@@ -84,27 +84,33 @@ post '/add_module' => sub {
 
 sub _perform_search {
     my ($args) = @_;
- 
+    my $query = $args->{query}; 
+    
     my $rs = schema->resultset($args->{class});
+    my (%where, %attributes) = ();
 
     if (my $module = $args->{module}) {
         my @pod = schema->resultset('Module')->pgfulltext_search($module)->all;
         my @pod_ids = map { $_->id } @pod;
         
-        $rs = $rs->search({ 
-            module_id => { -in => \@pod_ids }, 
-        }, { 
-            order_by => 'default_order',
-        }); 
+        $where{module_id} = { -in => \@pod_ids };
+        $attributes{order_by} = 'default_order';
     }
 
-    if (my $query = $args->{query}) {
-        $rs = $rs->pgfulltext_search($query, 
-            { 
-                normalisation => { rank => 1, log_unique_words => 1 },
-            },   
-        );
+    if ($args->{class} eq q{Pod}){
+        # remove NAME attributes from rs as they're useless in search
+        $where{title} = { '!=' => 'NAME' };
     }
+
+    $rs = $rs->search(\%where, \%attributes);
+
+    return $rs->all if !$query; 
+
+    $rs = $rs->pgfulltext_search( $query, 
+        { 
+            normalisation => { rank => 1, log_unique_words => 1 },
+        },   
+    );
 
     return $rs->all;
 }
