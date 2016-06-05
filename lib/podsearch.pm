@@ -31,10 +31,20 @@ get '/generate' => sub {
 
 get '/search' => sub {
     my $query = params->{'query'};
+    
     my @results; 
-
     if ( length $query ) {
-        @results = _perform_search('Pod', $query);
+        my $module;
+        
+        if ($query =~ s{r:}{}){
+            ($module, $query) = split(/\s/, $query, 2);         
+        }
+
+        @results = _perform_search({
+            class => 'Pod', 
+            query => $query, 
+            module => $module
+        });
     }
     
     template 'search', {
@@ -48,8 +58,12 @@ get '/module_list' => sub {
     my $query = params->{'query'};
     
     my @modules;
+    
     if ($query) {
-        @modules = _perform_search('Module', $query);
+        @modules = _perform_search({
+            class => 'Module',
+            query => $query,
+        });
     } else {
         @modules = schema->resultset('Module')->all;
     }
@@ -61,7 +75,6 @@ get '/module_list' => sub {
     };  
 };
 
-
 post '/add_module' => sub {
     my $message = schema->resultset('Module')->generate_pod(params->{'title'});
     set_flash($message);
@@ -69,15 +82,27 @@ post '/add_module' => sub {
 };
 
 sub _perform_search {
-    my ($class, $query) = @_;
+    my ($args) = @_;
+ 
+    warn Dumper $args->{class}; 
+    my $rs = schema->resultset($args->{class});
 
-    my @search_rs = schema->resultset($class)->pgfulltext_search($query, 
-        { 
-            normalisation => { length => 1 },
-        },   
-    );
+    if (my $module = $args->{module}) {
+        my @pod = schema->resultset('Module')->pgfulltext_search($module)->all;
+        my @pod_ids = map { $_->id } @pod;
+        
+        $rs = $rs->search({ module_id => { -in => \@pod_ids } }, { order_by => 'id' }); 
+    }
 
-    return @search_rs;
+    if (my $query = $args->{query}) {
+        $rs = $rs->pgfulltext_search($query, 
+            { 
+                normalisation => { length => 1 },
+            },   
+        );
+    }
+
+    return $rs->all;
 }
 
 true;

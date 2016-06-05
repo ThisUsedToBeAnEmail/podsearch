@@ -96,7 +96,7 @@ sub pgfulltext_search {
         order_by => { -desc => \$rank },
     );
 
-    return $self->search(\%where, \%attributes);
+    return $self->search_rs(\%where, \%attributes);
 }
 
 sub _normalisation {
