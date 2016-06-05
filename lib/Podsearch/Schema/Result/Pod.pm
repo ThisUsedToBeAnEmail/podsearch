@@ -19,6 +19,8 @@ __PACKAGE__->add_columns(
     { data_type => "text", is_nullable => 0, pgfulltext => 'A' },
     "content",
     { data_type => "text", is_nullable => 1, pgfulltext => 'B' },
+    "default_order",
+    { data_type => "integer" },
 );
 
 __PACKAGE__->set_primary_key("id");

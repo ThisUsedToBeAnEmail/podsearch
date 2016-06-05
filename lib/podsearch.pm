@@ -85,14 +85,17 @@ post '/add_module' => sub {
 sub _perform_search {
     my ($args) = @_;
  
-    warn Dumper $args->{class}; 
     my $rs = schema->resultset($args->{class});
 
     if (my $module = $args->{module}) {
         my @pod = schema->resultset('Module')->pgfulltext_search($module)->all;
         my @pod_ids = map { $_->id } @pod;
         
-        $rs = $rs->search({ module_id => { -in => \@pod_ids } }, { order_by => 'id' }); 
+        $rs = $rs->search({ 
+            module_id => { -in => \@pod_ids }, 
+        }, { 
+            order_by => 'default_order',
+        }); 
     }
 
     if (my $query = $args->{query}) {

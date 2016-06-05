@@ -36,9 +36,11 @@ sub generate_pod {
 sub update_pod {
     my ($self, $result, @pod) = @_;
 
+    my $order = 0;
     foreach my $section (@pod) {
         $section->{module_id} = $result->id;
-        $self->result_source->schema->resultset('Pod')->update_or_create($section);
+        my $result = $self->result_source->schema->resultset('Pod')->update_or_create($section);
+        $result->update({ default_order => $order++ });
     }
 }
 

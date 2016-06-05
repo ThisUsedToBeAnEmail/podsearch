@@ -5,11 +5,12 @@ CREATE TABLE modules (
 );
 
 CREATE TABLE pod (
-    id          SERIAL PRIMARY KEY NOT NULL,
-    module_id   integer REFERENCES modules(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    identifier  text,
-    title       text,
-    content     text
+    id              SERIAL PRIMARY KEY NOT NULL,
+    module_id       integer REFERENCES modules(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    identifier      text,
+    title           text,
+    content         text,
+    default_order   integer
 );
 
 INSERT INTO modules (name, version) VALUES ('Testing', '1.0');
