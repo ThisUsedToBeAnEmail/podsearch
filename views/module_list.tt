@@ -10,7 +10,7 @@
         [% IF module_list %]
             [% FOREACH result IN module_list %]
                 <div class="result"> 
-                    <h1><pre><code>[% result.name | html %]</code></pre></h1>
+                    <h1><pre><code><a href="/search?query=r:[% result.name | html %]">[% result.name | html %]</a></code></pre></h1>
                     <div><pre><code>[% result.version | html %]</code></pre></div>
                 </div>
             [% END %]
