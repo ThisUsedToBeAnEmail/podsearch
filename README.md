@@ -1,5 +1,7 @@
 # podsearch
 
+LIVE DEMO - https://podsearch.herokuapp.com/
+
 Install postgres...
 
 createuser -P dancer
@@ -40,3 +42,5 @@ psql podsearch
 select * from pod;
 
 ...................
+
+lots of TODOs
