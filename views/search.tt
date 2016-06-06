@@ -6,6 +6,7 @@
             search_text = search_text
             search_box_button = 'Search'
             action = search_pod_url
+            placeholder = 'r:repository query | m:module query | query'
         %]
     </div>
     <div class="search-results">

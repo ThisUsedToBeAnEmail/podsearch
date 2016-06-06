@@ -2,7 +2,7 @@
    <h4>[% search_box_heading %]</h4>
    <form action="[% action %]" [% IF method %] method=[% method %] [% END %] class=add-entry>
         <span>
-            <input type="text" class="search" size=30 name="[% search_box_input %]" [% IF search_text %] value="[% search_text %]" [% END %]>
+            <input type="text" class="search" placeholder="[% placeholder %]" size=30 name="[% search_box_input %]" [% IF search_text %] value="[% search_text %]" [% END %]>
             <input type="submit" class="button" value="[% search_box_button %]">
         </span>
     </form>

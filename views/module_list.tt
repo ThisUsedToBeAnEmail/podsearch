@@ -5,6 +5,7 @@
             search_box_input = 'query'
             search_box_button = 'Search'
             action = search_module_url
+            placeholder = 'search module name'
         %]
     </div>
     <div class="search-results">
