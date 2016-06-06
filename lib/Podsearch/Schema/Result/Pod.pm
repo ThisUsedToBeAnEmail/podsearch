@@ -18,7 +18,7 @@ __PACKAGE__->add_columns(
     "title",
     { data_type => "text", is_nullable => 0, pgfulltext => 'A' },
     "content",
-    { data_type => "text", is_nullable => 1, pgfulltext => 'B' },
+    { data_type => "text", is_nullable => 1, pgfulltext => 'C' },
     "default_order",
     { data_type => "integer" },
 );
